@@ -1,146 +1,202 @@
 # E-commerce Funnel, Retention & RFM Analysis
 
-An end-to-end **business analytics** project on e-commerce clickstream and transaction data. The project analyzes conversion funnels, identifies user drop-offs, measures customer retention using cohorts, and segments customers by value using RFM analysis.
+This project analyzes e-commerce user activity to understand how users move through the purchase funnel, how conversion rates differ across channels and devices, how customer retention changes over time, and which customer segments contribute the most revenue.
 
-Built using **SQL and Python**, with an interactive dashboard for exploring product and customer metrics.
+I built this project using SQL and Python, along with an interactive dashboard to explore the results.
 
 ## Interactive Dashboard
 
-Explore the interactive dashboard for conversion funnel analysis, channel and device performance, customer segmentation, and cohort retention.
-
 **[Open the Interactive Dashboard](./interactive_dashboard.html)**
 
-### Dashboard Features
+The dashboard brings the main analyses together in one place.
 
-- **Interactive Filters:** Filter analytics by device and acquisition channel.
-- **KPI Overview:** Monitor users, conversion rate, revenue, and average order value (AOV).
-- **Conversion Funnel:** Analyze user progression from product views to purchases and identify the largest drop-off.
-- **Channel Performance:** Compare purchase conversion rates across acquisition channels.
-- **Device Performance:** Compare conversion rates across mobile, desktop, and tablet users.
+- **KPI Overview:** Users, conversion rate, revenue, and average order value (AOV).
+- **Conversion Funnel:** Track users from product views to purchases and identify drop-offs.
+- **Channel Analysis:** Compare purchase conversion rates across acquisition channels.
+- **Device Analysis:** Compare conversion rates across mobile, desktop, and tablet users.
 - **RFM Segmentation:** Explore customer segments by revenue contribution or customer count.
-- **Cohort Retention:** Analyze repeat-purchase behaviour using a retention heatmap, with percentage and user-count views.
+- **Cohort Retention:** View repeat-purchase behaviour using a retention heatmap.
+- **Interactive Filters:** Filter by device and acquisition channel to explore the results.
 
-> **Data disclaimer:** The project uses synthetic e-commerce data generated for analytical and demonstration purposes. The metrics and insights are illustrative and do not represent the performance of a real business.
+> **Note:** The dataset is synthetic and was generated for this project. The results are illustrative and do not represent the performance of a real business.
 
----
+## Project Objectives
 
-## What's in the box
+The project focuses on five questions:
 
-```
+1. At which stage of the purchase funnel do the most users drop off?
+2. How do conversion rates differ across acquisition channels and devices?
+3. How does customer retention change over time?
+4. Which customer segments contribute the most revenue?
+5. How can these findings help identify areas for further investigation?
+
+## Project Structure
+
+```text
 ecommerce-funnel-retention/
-├── data/                    generated CSVs (users, events, orders)
-├── sql/analysis.sql         the SQL queries, heavily commented
+├── data/
+├── sql/
+│   └── analysis.sql
 ├── src/
-│   ├── generate_data.py     makes the synthetic dataset
-│   ├── run_analysis.py      loads CSV→SQLite, runs SQL, makes charts + insights
-│   ├── build_interactive_dashboard.py   builds interactive_dashboard.html
-│   └── prepare_powerbi.py   reshapes data into Power BI-ready tables
-├── charts/                  generated PNG charts
-├── interactive_dashboard.html   open this in a browser
-├── powerbi/                 Power BI-ready tables + DAX + build guide
+│   ├── generate_data.py
+│   ├── run_analysis.py
+│   ├── build_interactive_dashboard.py
+│   └── prepare_powerbi.py
+├── charts/
+├── interactive_dashboard.html
+├── powerbi/
 ├── requirements.txt
 └── README.md
 ```
 
-## Run it (3 commands)
+- `data/` contains the generated CSV files.
+- `sql/analysis.sql` contains the SQL queries used for analysis.
+- `src/` contains the scripts for generating data, running the analysis, building the dashboard, and preparing Power BI tables.
+- `charts/` contains the generated visualizations.
+- `interactive_dashboard.html` is the interactive dashboard.
+- `powerbi/` contains Power BI preparation files and the build guide.
+
+## Getting Started
+
+### Requirements
+
+- Python 3
+- pandas
+- NumPy
+- Matplotlib
+- SQLite
+
+SQLite is included with Python.
+
+### Installation
+
+Clone the repository and navigate to the project directory:
 
 ```bash
+git clone YOUR_REPOSITORY_URL
 cd ecommerce-funnel-retention
-python3 src/generate_data.py                 # 1. create data/*.csv
-python3 src/run_analysis.py                  # 2. run analysis -> charts/ + insights
-python3 src/build_interactive_dashboard.py   # 3. build interactive_dashboard.html
 ```
-Only needs `pandas`, `numpy`, `matplotlib` (`pip install pandas numpy matplotlib`).
-SQLite is built into Python.
 
----
+Install the dependencies:
 
-## The data model (what each table means)
+```bash
+pip install -r requirements.txt
+```
 
-| table | grain (1 row = ) | key columns |
-|-------|------------------|-------------|
-| `users`  | one user | `user_id`, `signup_date`, `acquisition_channel`, `device` |
-| `events` | one action in a user's journey | `user_id`, `event_name`, `event_time` |
-| `orders` | one completed purchase | `user_id`, `order_time`, `revenue` |
+### Run the Project
 
-`event_name` moves through the funnel:
-`product_view → add_to_cart → begin_checkout → purchase`.
+Run the scripts in the following order:
 
-This is exactly the shape of real product analytics data (think GA4 /
-Mixpanel / Amplitude event streams + an orders table).
+```bash
+python src/generate_data.py
+python src/run_analysis.py
+python src/build_interactive_dashboard.py
+```
 
----
+The scripts generate the dataset, perform the analysis, create visualizations, and build the interactive dashboard.
 
-## The five analyses (and how each one works)
+Open `interactive_dashboard.html` in a browser to explore the results.
 
-### 1. Conversion funnel — *where do we lose people?*
-Count **distinct users** who reached each stage. Because you can't purchase
-without checking out, counts shrink down the funnel; each drop is a leak.
-- **Step conversion** = users at this stage ÷ users at the previous stage.
-- The stage with the lowest step conversion is where to focus.
+## Dataset
 
-*Result here:* only **41%** of viewers add to cart → the top of the funnel is
-the biggest leak, so product-page experiments move the most volume.
+The project uses three tables.
 
-### 2. Conversion by channel & device — *who converts, not just who clicks?*
-Join every user to whether they ever purchased, then compute
-`buyers ÷ total_users` per channel and per device.
+| Table | Description | Key Columns |
+|---|---|---|
+| `users` | User information | `user_id`, `signup_date`, `acquisition_channel`, `device` |
+| `events` | User activity | `user_id`, `event_name`, `event_time` |
+| `orders` | Completed purchases | `user_id`, `order_time`, `revenue` |
 
-*Result:* **Email 23.7%** and **Paid Search 18.6%** beat **Social 5.9%**;
-**Mobile converts at 9.8% vs Desktop 25.8%** → a mobile-checkout friction point.
+The purchase funnel follows four stages:
 
-### 3. Cohort retention — *do customers come back?*
-- A customer's **cohort** = the month of their first purchase.
-- For each later month, count how many of that cohort purchased again.
-- `month_number = 0` is the acquisition month (always 100%); each column to
-  the right shows the % still active N months later.
+`product_view → add_to_cart → begin_checkout → purchase`
 
-Reading the heatmap: rows are cohorts, columns are months-since-first-purchase,
-darker = higher retention. The fall-off from column 0→1 is your repeat-purchase rate.
+The dataset is generated locally, so no external download is required.
 
-### 4. RFM segmentation — *which customers are worth the most?*
-Score every customer on three axes, each split into quintiles (`NTILE(5)`):
-- **R**ecency — days since last order (recent = good, so we flip it)
-- **F**requency — number of orders
-- **M**onetary — total spend
+## Analysis
 
-Then bucket into named segments (**Champions, Loyal, At Risk, Lost…**) with a
-`CASE` statement. This converts raw scores into *actions*: reward Champions,
-win back At-Risk, re-activate Lost.
+### 1. Conversion Funnel Analysis
 
-*Result:* a few hundred **Champions/Loyal/At-Risk** customers hold ~**83%** of
-revenue → win-back on **At-Risk** protects the biggest revenue pool.
+I used distinct-user counts to measure how many users reached each stage of the purchase funnel.
 
-### 5. Dashboard (interactive — just open it)
-`interactive_dashboard.html` is a self-contained interactive dashboard — open
-it in any browser, no install. **Toggle controls** let you filter by device and
-channel (KPIs, funnel, and conversion charts recompute live, with cross-filtering),
-switch the funnel between user counts and step-conversion %, flip RFM between
-revenue and customer count, and view cohort retention as % or users. The
-`powerbi/` folder (Power BI-ready tables + DAX + build guide) is there too if you
-later want a Power BI version.
+The analysis compares consecutive stages to calculate step-conversion rates and identify where the largest drop-offs occur. This helps highlight stages that may need further investigation.
 
----
+### 2. Conversion by Channel and Device
 
-## SQL techniques used (say these in an interview)
-- `COUNT(DISTINCT …)` for unique-user funnels
-- `LEFT JOIN` + `CASE` to flag converters and build segments
-- **CTEs** (`WITH …`) to keep multi-step logic readable
-- **Window functions**: `NTILE(5) OVER (ORDER BY …)` for RFM quintiles
-- Date bucketing for cohorts (`strftime` in SQLite; `FORMAT_DATE`/`to_char`
-  in BigQuery/Postgres — noted inline in `analysis.sql`)
+I compared purchase conversion rates across five acquisition channels:
 
-## Headline insights (the "so what")
-1. **Top-of-funnel leak** (view→cart 41%) → prioritise product-page A/B tests.
-2. **Mobile checkout friction** (9.8% vs 25.8%) → audit mobile checkout.
-3. **Channel spend is mis-allocated** → shift budget to Email/Paid Search.
-4. **Revenue is concentrated** in At-Risk/Champions → a retention/win-back
-   program protects the most revenue per rupee spent.
+- Organic
+- Paid Search
+- Social
+- Email
+- Referral
 
-## Notes & honesty
-The dataset is **synthetic** (generated with controllable drop-off and a
-decaying repeat-purchase process) so the repo runs with zero external
-downloads. The *methods* — funnel, cohort, RFM, significance — are identical
-to what you'd run on real warehouse data. To use real data, point
-`generate_data.py`'s outputs at the [Olist e-commerce dataset](https://www.kaggle.com/olistbr/brazilian-ecommerce)
-or the GA4 sample and the SQL/analysis works unchanged.
+I also compared conversion rates across mobile, desktop, and tablet users.
+
+These comparisons help identify differences in user behaviour and potential areas for further analysis.
+
+### 3. Cohort Retention Analysis
+
+Customers are grouped by the month of their first purchase, and their purchasing activity is tracked in subsequent months.
+
+The cohort analysis helps examine repeat-purchase behaviour and compare retention across different customer groups. Results are displayed in a heatmap, with options to view retention percentages or user counts.
+
+### 4. RFM Customer Segmentation
+
+RFM analysis groups customers using three metrics:
+
+- **Recency:** How recently a customer made a purchase.
+- **Frequency:** How often a customer made purchases.
+- **Monetary:** How much a customer spent.
+
+The SQL analysis uses quintile-based scoring with `NTILE(5)` and categorizes customers into segments such as Champions, Loyal, At Risk, and Lost/Hibernating.
+
+These segments can help identify valuable customers and groups that may benefit from targeted retention efforts.
+
+### 5. Interactive Dashboard
+
+I built an interactive HTML dashboard to make the results easier to explore.
+
+It includes KPI cards, conversion charts, RFM visualizations, and a cohort-retention heatmap. Users can filter by device and acquisition channel, switch between funnel user counts and step-conversion percentages, and change the RFM and cohort display modes.
+
+The device and channel filters update the KPI cards, funnel, and conversion charts. RFM and cohort views remain global and are not affected by those filters.
+
+## SQL Concepts Used
+
+The project uses the following SQL techniques:
+
+- `COUNT(DISTINCT ...)` for distinct-user funnel calculations.
+- `JOIN` operations to combine user, event, and order data.
+- `CASE` expressions for conversion flags and customer segmentation.
+- Common Table Expressions (CTEs) for organizing multi-step queries.
+- Window functions such as `NTILE(5)` for RFM scoring.
+- Date-based grouping for cohort analysis.
+- Aggregations for calculating conversion rates and customer metrics.
+
+The queries are available in `sql/analysis.sql`.
+
+## Tech Stack
+
+- **Languages:** SQL, Python, JavaScript
+- **Data Analysis:** pandas, NumPy
+- **Database:** SQLite
+- **Visualization:** Matplotlib, HTML, CSS
+- **Analytics:** Funnel analysis, conversion metrics, cohort retention, RFM segmentation
+- **Additional Tools:** Power BI-ready tables and DAX preparation
+
+## Limitations
+
+The dataset is synthetic and does not represent actual customer behaviour or real business performance.
+
+The analysis identifies patterns in the generated data, but these patterns do not establish causality. Any business recommendations would need to be validated using real data and, where appropriate, controlled experiments.
+
+## Future Improvements
+
+- Add statistical significance testing for conversion comparisons.
+- Extend the analysis with additional customer and transaction metrics.
+- Apply the analysis to a real e-commerce dataset.
+- Deploy the dashboard as a live web demo.
+- Build a Power BI dashboard using the prepared tables and DAX examples.
+
+- GitHub: YOUR_GITHUB_PROFILE_URL
+- LinkedIn: YOUR_LINKEDIN_PROFILE_URL
