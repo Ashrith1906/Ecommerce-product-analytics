@@ -1,15 +1,26 @@
 # E-commerce Funnel, Retention & RFM Analysis
 
-An end-to-end **business-analytics** project on e-commerce clickstream and
-transaction data: build a conversion funnel, find where users drop off,
-measure retention with cohorts, and segment customers by value (RFM) — then
-turn the numbers into business recommendations and a dashboard.
+An end-to-end **business analytics** project on e-commerce clickstream and transaction data. The project analyzes conversion funnels, identifies user drop-offs, measures customer retention using cohorts, and segments customers by value using RFM analysis.
 
-Built with **SQL + Python (pandas, matplotlib)**. No paid tools required.
+Built using **SQL and Python**, with an interactive dashboard for exploring product and customer metrics.
 
-> Why this exists: it mirrors a real data-intelligence workflow —
-> *transactional data → user-journey events → funnel & drop-off → churn/retention
-> → dashboards → recommendations.*
+## Interactive Dashboard
+
+Explore the interactive dashboard for conversion funnel analysis, channel and device performance, customer segmentation, and cohort retention.
+
+**[Open the Interactive Dashboard](./interactive_dashboard.html)**
+
+### Dashboard Features
+
+- **Interactive Filters:** Filter analytics by device and acquisition channel.
+- **KPI Overview:** Monitor users, conversion rate, revenue, and average order value (AOV).
+- **Conversion Funnel:** Analyze user progression from product views to purchases and identify the largest drop-off.
+- **Channel Performance:** Compare purchase conversion rates across acquisition channels.
+- **Device Performance:** Compare conversion rates across mobile, desktop, and tablet users.
+- **RFM Segmentation:** Explore customer segments by revenue contribution or customer count.
+- **Cohort Retention:** Analyze repeat-purchase behaviour using a retention heatmap, with percentage and user-count views.
+
+> **Data disclaimer:** The project uses synthetic e-commerce data generated for analytical and demonstration purposes. The metrics and insights are illustrative and do not represent the performance of a real business.
 
 ---
 
